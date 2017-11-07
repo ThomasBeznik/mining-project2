@@ -11,6 +11,15 @@ import java.util.stream.Stream;
  */
 public class Utils {
 
+
+
+       public static int Wracc(int PositiveSize, int NegativeSize, int XsupportPos, int XsupportNeg){
+        int first = (PositiveSize*NegativeSize/(PositiveSize + NegativeSize));
+        int second = ((XsupportPos/PositiveSize ) - (XsupportNeg/NegativeSize));
+        return first*second;
+    }
+
+
     /**
      * Reads a dataset file and returns its transactions.
      * @param filePath the path to the file to read.
