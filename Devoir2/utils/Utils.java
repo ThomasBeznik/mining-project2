@@ -11,6 +11,91 @@ import java.util.stream.Stream;
  */
 public class Utils {
 
+    public static void main(String args[]){
+        ArrayList<Transaction> tested =  readTransactions("/Users/Adrien/Documents/Ingenieur Civil/Master 1 - DATA/Q1/IntelliJ/Project 2 MPD/src/test_dataset/negative.txt");
+        Map<String, Map<Integer, List<Integer>>> tested_2 =  readItemMap("/Users/Adrien/Documents/Ingenieur Civil/Master 1 - DATA/Q1/IntelliJ/Project 2 MPD/src/test_dataset/negative.txt");
+
+
+        System.out.println(tested_2);
+        Map<String, Map<Integer, List<Integer>>> tested_2_after = SPADE(tested_2,"AB");
+        System.out.println(tested_2_after);
+
+        // Works for "A" - "B" - "C" - "AA" - "AAB" - "BA" - "BB" - "CA"
+
+        // Doesn't work for "AB" - "AC" - "BC"
+
+    }
+
+    public static Map<String, Map<Integer, List<Integer>>> SPADE( Map<String, Map<Integer, List<Integer>>> tested, String sequence){
+
+        if (sequence.length() == 1) {
+
+            Set<String> Set = tested.keySet();
+
+            //First Step = Remove la premiere entree de chaque transaction dans laquelle "sequence" apparait.
+            Map<Integer, List<Integer>> line_seq = tested.get(sequence); //On isole la ligne.
+            ArrayList<Integer> removedEntries = new ArrayList<Integer>(); //On va stocker les entrees qu'on delete pour la suite de la methode.
+
+            for (int i = 1; i <= line_seq.size(); i++) {
+                List<Integer> transaction_i = line_seq.get(new Integer(i)); //On isole chaque transaction.
+                if (transaction_i.size() != 0){
+                    removedEntries.add(transaction_i.remove(0)); //On stocke l'entree qu'on remove en meme temps.
+                }
+
+            }
+            Map<Integer, List<Integer>> RemainingOfsequence = tested.get(sequence);
+
+            //Second Step = On enleve les entrees des autres items qui precedaient les entrees que l'on vient d'enlever
+            Set.remove(sequence);
+            Iterator<String> iteSet = Set.iterator();
+            while (iteSet.hasNext()) {
+                String current = iteSet.next();
+                Map<Integer, List<Integer>> line_current = tested.get(current);
+
+                for (int i = 1; i <= line_current.size(); i++) //# of Transactions
+                {
+                    List<Integer> transaction_current = line_current.get(i);
+                    Iterator<Integer> transaction_item_current = transaction_current.iterator();
+                    while (transaction_item_current.hasNext()) {
+                        int current_item = transaction_item_current.next();
+                        if (current_item < removedEntries.get(i - 1)) {
+                            transaction_item_current.remove();
+                        }
+                    }
+                }
+            }
+
+            tested.put(sequence, RemainingOfsequence);
+        }
+        else //means that the sequence is longer then just a single character
+        {
+           String[] sequence_array = sequence.split("");
+            for (int i = 0; i < sequence_array.length ; i++) {
+                SPADE(tested,sequence_array[i]);
+            }
+
+
+        }
+            return tested;
+
+    }
+
+
+    public static int Support(Map<String, Map<Integer, List<Integer>>> tested, String sequence){
+
+        Map<Integer, List<Integer>> line_seq = tested.get(sequence);
+        Set<Integer> Set = line_seq.keySet();
+        int support = 0;
+        Iterator<Integer> ite = Set.iterator();
+
+        while(ite.hasNext()){
+            if(line_seq.get(ite.next()).isEmpty() == false){
+                support = support + 1;
+            }
+        }
+        return support;
+    }
+
 
 
        public static int Wracc(int PositiveSize, int NegativeSize, int XsupportPos, int XsupportNeg){
