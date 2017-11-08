@@ -43,29 +43,31 @@ public class Utils {
                 }
 
             }
-            Map<Integer, List<Integer>> RemainingOfsequence = tested.get(sequence);
+            //Map<Integer, List<Integer>> RemainingOfsequence = tested.get(sequence);
 
             //Second Step = On enleve les entrees des autres items qui precedaient les entrees que l'on vient d'enlever
-            Set.remove(sequence);
+            //Set.remove(sequence);
             Iterator<String> iteSet = Set.iterator();
+
             while (iteSet.hasNext()) {
-                String current = iteSet.next();
-                Map<Integer, List<Integer>> line_current = tested.get(current);
+                String current = iteSet.next(); //"A" ou "B" ou "C"
+                Map<Integer, List<Integer>> line_current = tested.get(current); // je prends la line des occurences 
 
                 for (int i = 1; i <= line_current.size(); i++) //# of Transactions
                 {
-                    List<Integer> transaction_current = line_current.get(i);
+                    List<Integer> transaction_current = line_current.get(i); //je regarde chaque trasaction a tour de role
                     Iterator<Integer> transaction_item_current = transaction_current.iterator();
-                    while (transaction_item_current.hasNext()) {
+                    while (transaction_item_current.hasNext()) { //je regarde chaque entree de la transaction
                         int current_item = transaction_item_current.next();
-                        if (current_item < removedEntries.get(i - 1)) {
+                        if (current_item < removedEntries.get(i - 1)) { //si l'entree est plus petite que la premiere entree
+                            // enlevee a la transaction correspondante, je la supprime
                             transaction_item_current.remove();
                         }
                     }
                 }
             }
 
-            tested.put(sequence, RemainingOfsequence);
+            //tested.put(sequence, RemainingOfsequence);
         }
         else //means that the sequence is longer then just a single character
         {
